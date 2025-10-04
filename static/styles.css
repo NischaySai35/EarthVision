@@ -1,0 +1,74 @@
+body, html {
+      margin: 0;
+      height: 100%;
+      overflow: hidden;
+      font-family: sans-serif;
+      background-color: #000;
+      box-sizing: border-box;
+    }
+    #map {
+      height: 100%;
+      width: 100%;
+    }
+    /* Page frame: top and left white borders (content is inset) */
+  #borderTop{ position:fixed; top:0; left:0; right:0; height:17mm; background:#fff; z-index:2600; display:flex; align-items:center; justify-content:center; }
+  #appContainer{ position:fixed; top:5mm; left:0; right:0; bottom:0; z-index:2000; overflow:hidden; }
+  #appContainer{ transition: left .28s ease; }
+
+    /* Header inside app container */
+  header.site-header{ position:relative; height:56px; display:flex; align-items:center; justify-content:center; z-index:2200; background: transparent; color:#fff; }
+  header.site-header h1{ font-size:28px; margin:0; color: #000000; }
+  .hamburger{ width:28px; height:28px; background:transparent; border:none; cursor:pointer; position:absolute; left:12px; top:14px; }
+  .hamburger .bar{ width:18px; height:2px; background:#000000; display:block; box-shadow:0 6px 0 #000000, 0 -6px 0 #000000; }
+
+    /* Side pane */
+  #sidePane{ position:fixed; left:0; top:56px; bottom:0; width:320px; background:rgba(18,18,18,0.96); color:#fff; z-index:2700; transform:translateX(-100%); transition:transform .28s ease; padding:12px; overflow:auto; }
+    #sidePane.open{ transform:translateX(0); }
+    #sidePane .pane-header{ display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px; }
+    #sidePane .pane-controls{ display:flex; flex-direction:column; gap:8px; }
+    #sidePane input, #sidePane button{ font-size:14px; }
+    /* Control bar */
+    .control-bar {
+      position: relative;
+      z-index: 1000;
+      display: flex;
+      gap: 8px;
+      background: rgba(20,20,20,0.6);
+      padding: 8px;
+      border-radius: 8px;
+      align-items: center;
+      backdrop-filter: blur(4px);
+      flex-wrap:wrap;
+    }
+    .control-bar.vertical{ flex-direction: column; align-items: stretch; gap:6px; background: transparent; padding:0; }
+    .control-bar.vertical button, .control-bar.vertical input[type="range"]{ width:100%; }
+    .control-bar button, .control-bar input[type="range"] {
+      background: #1f1f1f;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 6px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .control-bar button.active { background: #2a7ae2; }
+    .control-bar label { color: #ddd; font-size: 12px; margin-left:6px; }
+    .leaflet-control-attribution {
+      display: none; /* Hide extra text */
+    }
+    /* Navigation hover label */
+    .nav-label{
+      position: absolute;
+      pointer-events: none;
+      background: rgba(0,0,0,0.75);
+      color: #fff;
+      padding: 6px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      transform: translate(12px, -120%); /* anchor to the right of pointer */
+      white-space: nowrap;
+      z-index: 3000;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    }
+    /* Make sure leaflet control UI (layer buttons) appear above compare grid */
+    .leaflet-top, .leaflet-control{ z-index: 4000 !important; }

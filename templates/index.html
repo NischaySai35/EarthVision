@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NASA Earth Zoom Viewer</title>
+  <!-- Leaflet CSS -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
+  <link rel="stylesheet" href="../static/styles.css" />
+  
+</head>
+<body>
+  <div id="borderTop"><button id="hamburgerBtn" class="hamburger" aria-label="Toggle side pane"><span class="bar"></span></button><h1 style="margin:0; font-size:35px; color:#2a7ae2;">EarthVision</h1></div>
+  <div id="appContainer">
+  <header class="site-header"></header>
+
+  <aside id="sidePane" aria-hidden="true">
+    <div class="pane-header"><strong>Controls</strong><button id="closePane" title="Close" style="background:transparent;border:none;color:#fff;font-size:18px;">✕</button></div>
+    <div class="pane-controls">
+      <!-- will move control-bar here when opened -->
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <label style="font-size:13px;color:#ddd;">Date</label>
+        <input type="date" id="paneDateInput" />
+        <button id="applyDateBtn">Apply Date</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
+        <label style="font-size:13px;color:#ddd;">Location</label>
+        <input id="paneLocationInput" placeholder="Enter place name or coordinates" />
+        <button id="applyLocationBtn">Go</button>
+      </div>
+    </div>
+  </aside>
+  <div class="control-bar" role="toolbar" aria-label="Map controls">
+    <button id="zoomIn" title="Zoom in">＋</button>
+    <button id="zoomOut" title="Zoom out">−</button>
+    <button id="panToggle" title="Toggle pan/drag">Pan</button>
+    <button id="resetView" title="Reset view">Reset</button>
+    <button id="fitWorld" title="Fit world">Fit</button>
+    <button id="navToggle" title="Navigation (hover for place names)">Nav</button>
+    <button id="compareToggle" title="Toggle MODIS overlay">Compare</button>
+  </div>
+
+  <div id="map" style="position:absolute; top:56px; left:0; right:0; bottom:0;"></div>
+
+  <!-- Compare grid (hidden until Compare is clicked) -->
+  <div id="compareGrid" style="display:none; position:absolute; top:56px; left:0; right:0; bottom:0; background:transparent; z-index:1800;">
+    <!-- container for nav labels in compare mode will be appended to each map container -->
+    <div class="compare-grid" style="display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; height:100%;">
+      <div class="compare-cell" id="cell-0" style="position:relative; border:1px solid rgba(255,255,255,0.06);"></div>
+      <div class="compare-cell" id="cell-1" style="position:relative; border:1px solid rgba(255,255,255,0.06);"></div>
+      <div class="compare-cell" id="cell-2" style="position:relative; border:1px solid rgba(255,255,255,0.06);"></div>
+      <div class="compare-cell" id="cell-3" style="position:relative; border:1px solid rgba(255,255,255,0.06);"></div>
+    </div>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="../static/app.js"></script>
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  ></script>
+
+</body>
+</html>
