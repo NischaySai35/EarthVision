@@ -9,7 +9,7 @@
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
   />
-  <link rel="stylesheet" href="../static/styles.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
   
 </head>
 <body>
@@ -56,11 +56,12 @@
     </div>
   </div>
 
-  <!-- Leaflet JS -->
-  <script src="../static/app.js"></script>
+  <!-- Leaflet JS (load first) -->
   <script
     src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
   ></script>
+  <!-- App script (depends on Leaflet) -->
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
 
 </body>
 </html>
