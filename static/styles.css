@@ -48,7 +48,7 @@ body, html {
   left: 0;
   right: 0;
   height: var(--header-height);
-  background: linear-gradient(90deg, #1a2a6c, #b21f1f, #fdbb2d);
+  background: linear-gradient(90deg, #1B2735, #1B2735, #1B2735);
   z-index: 2600;
   display: flex;
   align-items: center;

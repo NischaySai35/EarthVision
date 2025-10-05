@@ -10,14 +10,13 @@
       zoomControl: false
     });
 
-    // --- Base Layer: NASA GIBS Blue Marble (natural color) ---
-    // Tiles from NASA GIBS public endpoint
+    // --- Base Layer ---
     const nasaLayer = L.tileLayer(
       "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       {
         attribution: "World",
         tileSize: 256,
-        time: "2024-01-01", // pick any valid date
+        time: "2025-10-05", // pick any valid date
         maxZoom: 9,
       }
     );
