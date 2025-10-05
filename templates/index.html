@@ -13,11 +13,18 @@
 <body>
   <div id="borderTop">
     <div class="logo-container">
-      <button id="hamburgerBtn" class="hamburger" aria-label="Toggle side pane">
-        <span class="bar"></span>
+      <button id="hamburgerBtn" class="hamburger control-btn" aria-label="Toggle side pane" aria-controls="sidePane" aria-expanded="false" title="Open menu">
+        <i class="fas fa-bars" aria-hidden="true"></i>
+        <span class="btn-label">Menu</span>
       </button>
       <h1 class="logo-text">EarthVision</h1>
       <h1 class="logo-text" style="font-size:1.3em; font-weight:400;"> : Explore, Analyze &amp; Compare Global Maps Instantly</h1>
+    </div>
+    <!-- header actions (right side) -->
+    <div class="header-actions" style="position:absolute; right:12px; top:10px;">
+      <button id="compareToggleHeader" class="header-btn control-btn compare-big" title="Compare Mode" aria-label="Toggle Compare View">
+        <i class="fas fa-th"></i><span class="btn-label">Compare</span>
+      </button>
     </div>
   </div>
   
@@ -48,17 +55,24 @@
           </div>
         </div>
         
+        <!-- Prominent Compare button sits at top and is centered; other controls centered below -->
         <div class="control-bar vertical" role="toolbar" aria-label="Map controls">
-          <button id="zoomIn" class="control-btn" title="Zoom In"><i class="fas fa-plus"></i></button>
-          <button id="zoomOut" class="control-btn" title="Zoom Out"><i class="fas fa-minus"></i></button>
-          <button id="panToggle" class="control-btn active" title="Toggle Pan"><i class="fas fa-hand-paper"></i></button>
-          <button id="resetView" class="control-btn" title="Reset View"><i class="fas fa-home"></i></button>
-          <button id="fitWorld" class="control-btn" title="Fit World"><i class="fas fa-globe-americas"></i></button>
-          <button id="navToggle" class="control-btn" title="Toggle Navigation"><i class="fas fa-location-arrow"></i></button>
-          <button id="compareToggle" class="control-btn" title="Compare Mode"><i class="fas fa-th"></i></button>
+          <button id="compareToggle" class="control-btn compare-big" title="Compare Mode"><i class="fas fa-th"></i><span class="btn-label">Compare</span></button>
+          <div class="control-row centered">
+            <button id="zoomIn" class="control-btn" title="Zoom In"><i class="fas fa-plus"></i><span class="btn-label">Zoom In</span></button>
+            <button id="zoomOut" class="control-btn" title="Zoom Out"><i class="fas fa-minus"></i><span class="btn-label">Zoom Out</span></button>
+          </div>
+          <div class="control-row centered">
+            <button id="panToggle" class="control-btn active" title="Toggle Pan"><i class="fas fa-hand-paper"></i><span class="btn-label">Pan</span></button>
+            <button id="resetView" class="control-btn" title="Reset View"><i class="fas fa-home"></i><span class="btn-label">Reset</span></button>
+          </div>
+          <div class="control-row centered">
+            <button id="fitWorld" class="control-btn" title="Fit World"><i class="fas fa-globe-americas"></i><span class="btn-label">Fit World</span></button>
+            <button id="navToggle" class="control-btn" title="Toggle Navigation"><i class="fas fa-location-arrow"></i><span class="btn-label">Nav</span></button>
+          </div>
         </div>
-      </div>
-    </aside>
+       </div>
+     </aside>
 
     <div id="map"></div>
 

@@ -43,13 +43,13 @@ body, html {
 
 /* Modern Header Design */
 #borderTop {
-  position: fixed;
+  position: relative;
+  z-index: 1200;
   top: 0;
   left: 0;
   right: 0;
   height: var(--header-height);
   background: linear-gradient(90deg, #1B2735, #1B2735, #1B2735);
-  z-index: 2600;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -60,17 +60,64 @@ body, html {
 .logo-container {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 10px;
+  position: relative;
+  z-index: 1300;
 }
 
-.logo-text {
-  font-size: 28px;
-  font-weight: 700;
-  margin: 0;
-  color: var(--light-text);
-  letter-spacing: 1px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+/* Larger rectangular menu button (hamburger) */
+.logo-container { gap: 18px; }
+
+/* make button rectangular and longer */
+.logo-container .hamburger {
+  min-width: 220px;
+  height: 56px;
+  padding: 10px 18px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 14px;
+  color: #fff !important;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+  border: 1px solid rgba(255,255,255,0.06);
+  transform-origin: left center;
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
 }
+
+/* bigger icon and label */
+.logo-container .hamburger i {
+  font-size: 22px;
+  color: #fff !important;
+  line-height: 1;
+}
+.logo-container .hamburger .btn-label {
+  font-size: 17px;
+  font-weight: 700;
+  color: #fff;
+  margin-left: 6px;
+  letter-spacing: 0.2px;
+}
+
+/* subtle entry animation */
+.logo-container .hamburger {
+  animation: slideInLeft .32s ease both;
+}
+@keyframes slideInLeft {
+  from { transform: translateX(-8px) scale(0.98); opacity: 0 }
+  to   { transform: translateX(0) scale(1); opacity: 1 }
+}
+
+/* hover/focus more pronounced */
+.logo-container .hamburger:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.5);
+  background: linear-gradient(90deg, rgba(255,255,255,0.09), rgba(255,255,255,0.04));
+}
+
+/* push titles slightly right if needed */
+.logo-text { margin-left: 8px; }
 
 /* Header Controls */
 .header-controls {
@@ -350,13 +397,11 @@ body, html {
 }
 
 .control-bar.vertical {
-  width: 100%;
-  margin-top: 20px;
+  display: flex;
   flex-direction: column;
-  align-items: stretch;
-  gap: 8px;
-  background: rgba(30, 30, 30, 0.85);
-  padding: 12px;
+  align-items: center; /* center buttons horizontally */
+  gap: 12px;
+  padding: 12px 8px;
 }
 
 .control-bar.vertical button,
@@ -385,6 +430,13 @@ body, html {
 .control-bar button.active {
   background: var(--primary-color);
   border-color: var(--primary-color);
+}
+
+.control-bar .control-row {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  justify-content: center; /* center each row */
 }
 
 .control-bar label {
@@ -658,14 +710,49 @@ body, html {
   }
 }
 
-/* Make sure leaflet control UI (layer buttons) appear above compare grid */
-.leaflet-top,
-.leaflet-control {
-  z-index: 4000 !important;
+/* Ensure top bar and hamburger/menu are always visible above the side pane */
+#borderTop {
+  position: relative;
+  z-index: 1200;
 }
 
-.leaflet-control-attribution {
-  display: none; /* Hide extra text */
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  z-index: 1300;
+}
+
+/* Force hamburger/menu visible (icon + label) and keep it above other UI */
+.logo-container .hamburger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--ctrl-fg, #222) !important;
+  margin-right: 8px;
+  visibility: visible !important;
+  opacity: 1 !important;
+  z-index: 1400;
+}
+
+/* Ensure the Menu label is readable and spaced */
+.logo-container .hamburger .btn-label {
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-left: 6px;
+  color: inherit;
+  display: inline-block;
+}
+
+/* Keep side pane under the header when closed */
+.side-pane {
+  z-index: 1100;
 }
 
 /* Responsive Design */
@@ -712,4 +799,208 @@ body, html {
   #sidePane {
     width: 250px;
   }
+}
+
+/* Center controls and style compare as a prominent action */
+.control-bar.vertical {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* center buttons horizontally */
+  gap: 12px;
+  padding: 12px 8px;
+}
+
+/* group rows inside vertical bar */
+.control-bar .control-row {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  justify-content: center; /* center each row */
+}
+
+/* standard control button layout */
+.control-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--ctrl-bg, rgba(255,255,255,0.95));
+  color: var(--ctrl-fg, #222);
+  border: 1px solid rgba(0,0,0,0.08);
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: transform .08s ease, box-shadow .08s ease;
+}
+
+/* Bigger, bolder Compare button (side pane + header) */
+.control-btn.compare-big {
+  background: linear-gradient(90deg,#ff8a34,#ff3d30);
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.15rem; /* larger label */
+  padding: 16px 26px; /* more horizontal space */
+  border-radius: 14px;
+  box-shadow: 0 18px 40px rgba(255,81,47,0.18);
+  min-width: 260px; /* wider rectangle */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border: none;
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+}
+
+/* larger icon + label inside the compare button */
+.control-btn.compare-big i {
+  font-size: 1.45rem;
+}
+.control-btn.compare-big .btn-label {
+  font-size: 1.05rem;
+  font-weight: 800;
+  margin-left: 8px;
+  letter-spacing: 0.2px;
+}
+
+/* header variant: slightly smaller than side-pane but still prominent */
+.header-actions .control-btn.compare-big {
+  min-width: 220px;
+  padding: 12px 20px;
+  font-size: 1.05rem;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.18);
+}
+
+/* attention animation (subtle pulse) */
+@keyframes comparePulse {
+  0%   { transform: translateY(0); box-shadow: 0 10px 30px rgba(255,81,47,0.14); }
+  60%  { transform: translateY(-4px); box-shadow: 0 24px 48px rgba(255,81,47,0.18); }
+  100% { transform: translateY(0); box-shadow: 0 10px 30px rgba(255,81,47,0.14); }
+}
+.control-btn.compare-big {
+  animation: comparePulse 4.5s ease-in-out infinite;
+}
+
+/* responsive: keep it usable on small screens */
+@media (max-width: 600px) {
+  .control-btn.compare-big { min-width: 160px; padding: 10px 14px; font-size: 1rem; }
+  .header-actions .control-btn.compare-big { min-width: 140px; padding: 8px 12px; font-size: 0.95rem; }
+  .control-btn.compare-big .btn-label { font-size: 0.95rem; }
+}
+
+/* hover/focus */
+.control-btn:hover,
+.control-btn:focus {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 22px rgba(0,0,0,0.18);
+  outline: none;
+}
+
+/* icon sizing */
+.control-btn i { font-size: 1.05rem; }
+
+/* label adjustments */
+.btn-label { display:inline-block; margin-left: 2px; }
+
+/* make labels hide on very small screens to keep layout tidy */
+@media (max-width:420px){
+  .btn-label { display:none; }
+  .control-btn.compare-big { min-width: 120px; padding: 10px 12px; }
+}
+
+/* optional: make control bar take less width when in side pane vertical mode */
+.side-pane .control-bar.vertical { width: 100%; box-sizing: border-box; }
+/* style the header hamburger to sit inline with the title */
+.logo-container .hamburger {
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:transparent;
+  border:none;
+  padding:6px 10px;
+  border-radius:8px;
+  cursor:pointer;
+  color:var(--ctrl-fg, #222);
+  margin-right:8px; /* extra space before title */
+}
+.logo-container .hamburger i { font-size:1.05rem; }
+/* ensure the Menu label is visible and spaced */
+.logo-container .hamburger .btn-label {
+  font-weight:600;
+  font-size:0.95rem;
+  margin-left:2px;
+}
+/* keep header compact on small screens (hide label if needed) */
+@media (max-width:420px){
+  .logo-container .hamburger .btn-label { display:none; }
+}
+
+/* Strong header hamburger/menu styling override */
+.logo-container .hamburger {
+  background: rgba(255,255,255,0.06);
+  color: #fff !important;
+  width: 48px;
+  height: 48px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+  border: 1px solid rgba(255,255,255,0.06);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.logo-container .hamburger i {
+  font-size: 20px;
+  color: #fff !important;
+  line-height: 1;
+  transition: transform .18s ease;
+  display: inline-block;
+}
+
+/* Menu label styling */
+.logo-container .hamburger .btn-label {
+  color: #fff;
+  font-weight: 800;
+  font-size: 20px; /* increased size for prominence */
+  margin-left: 6px;
+  letter-spacing: 0.2px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+  white-space: nowrap;
+}
+
+/* Hover / focus */
+.logo-container .hamburger:hover {
+  transform: translateY(-3px) scale(1.03);
+  background: rgba(255,255,255,0.09);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+}
+.logo-container .hamburger:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(52,152,219,0.12);
+}
+
+/* Active / expanded state (when side pane open) */
+.logo-container .hamburger.active,
+.logo-container .hamburger[aria-expanded="true"] {
+  background: linear-gradient(180deg,#2b3b4a,#1b2832);
+  transform: scale(1.02);
+}
+.logo-container .hamburger.active i,
+.logo-container .hamburger[aria-expanded="true"] i {
+  transform: rotate(90deg);
+}
+
+/* Small-screen tweaks */
+@media (max-width:420px) {
+  .logo-container .hamburger {
+    width: 44px;
+    height: 44px;
+    padding: 6px 8px;
+    font-size: 14px;
+  }
+  .logo-container .hamburger i { font-size: 18px; }
+  .logo-container .hamburger .btn-label { display: none; }
 }

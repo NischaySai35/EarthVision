@@ -112,8 +112,18 @@
     const panToggle = document.getElementById('panToggle');
     panToggle.addEventListener('click', ()=>{
       const dragging = map.dragging.enabled();
-      if(dragging){ map.dragging.disable(); panToggle.classList.remove('active'); panToggle.textContent='Pan'; if(window.compareMaps && Array.isArray(window.compareMaps)) window.compareMaps.forEach(cm=> cm.dragging.disable()); }
-      else { map.dragging.enable(); panToggle.classList.add('active'); panToggle.textContent='Pan'; if(window.compareMaps && Array.isArray(window.compareMaps)) window.compareMaps.forEach(cm=> cm.dragging.enable()); }
+      const label = panToggle.querySelector('.btn-label');
+      if(dragging){
+        map.dragging.disable();
+        panToggle.classList.remove('active');
+        if(label) label.textContent = 'Pan';
+        if(window.compareMaps && Array.isArray(window.compareMaps)) window.compareMaps.forEach(cm=> cm.dragging.disable());
+      } else {
+        map.dragging.enable();
+        panToggle.classList.add('active');
+        if(label) label.textContent = 'Pan';
+        if(window.compareMaps && Array.isArray(window.compareMaps)) window.compareMaps.forEach(cm=> cm.dragging.enable());
+      }
     });
     // rotation controls removed
     document.getElementById('resetView').addEventListener('click', ()=>{
@@ -154,6 +164,29 @@
   document.getElementById('fitWorld').addEventListener('click', ()=>{ map.fitWorld(); if(window.compareMaps && Array.isArray(window.compareMaps)) window.compareMaps.forEach(cm=> cm.fitWorld()); });
 
     // compare toggle is handled by the compare-grid module below (keeps behavior consistent)
+
+// Header Compare button: forward clicks to the side-pane compare toggle and keep state synced
+(function(){
+  const headerBtn = document.getElementById('compareToggleHeader');
+  const sideBtn = document.getElementById('compareToggle');
+  if(!headerBtn) return;
+
+  // When header button clicked, trigger the side pane button (keeps single source of logic)
+  headerBtn.addEventListener('click', ()=> {
+    try{ if(sideBtn) sideBtn.click(); }catch(e){}
+  });
+
+  // Sync header button active state to match side button
+  function syncCompareHeader(){
+    if(!sideBtn) return;
+    headerBtn.classList.toggle('active', sideBtn.classList.contains('active'));
+  }
+  if(sideBtn){
+    sideBtn.addEventListener('click', syncCompareHeader);
+    // initialize state
+    syncCompareHeader();
+  }
+})();
 
   // Side pane / hamburger logic
   const hamburgerBtn = document.getElementById('hamburgerBtn');
@@ -237,7 +270,7 @@
       nasa: nasaLayer._url || 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       viirs: viirisLayer._url || 'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_CityLights_2012/default/{time}/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpg',
       blue: blueLayer._url || 'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default/{time}/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpg',
-      viirsrgb: viirisrgbLayer._url || 'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_SNPP_CorrectedReflectance_BandsM11-I2-I1/default/{time}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg'
+      viirisrgb: viirisrgbLayer._url || 'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_SNPP_CorrectedReflectance_BandsM11-I2-I1/default/{time}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg'
     };
 
     async function applyDateToLayerDateString(dateStr){ // dateStr in YYYY-MM-DD
@@ -247,7 +280,7 @@
         if(nasaLayer){ const tpl = layerTemplates.nasa; if(tpl.indexOf('{time}')!==-1){ const newUrl = tpl.replace('{time}', time); nasaLayer.options.time = time; nasaLayer.setUrl(newUrl); } }
         if(viirisLayer){ const tpl = layerTemplates.viirs; if(tpl.indexOf('{time}')!==-1){ const newUrl = tpl.replace('{time}', time); viirisLayer.options.time = time; viirisLayer.setUrl(newUrl); } }
         if(blueLayer){ const tpl = layerTemplates.blue; if(tpl.indexOf('{time}')!==-1){ const newUrl = tpl.replace('{time}', time); blueLayer.options.time = time; blueLayer.setUrl(newUrl); } }
-        if(viirisrgbLayer){ const tpl = layerTemplates.viirsrgb; if(tpl.indexOf('{time}')!==-1){ const newUrl = tpl.replace('{time}', time); viirisrgbLayer.options.time = time; viirisrgbLayer.setUrl(newUrl); } }
+        if(viirisrgbLayer){ const tpl = layerTemplates.viirisrgb; if(tpl.indexOf('{time}')!==-1){ const newUrl = tpl.replace('{time}', time); viirisrgbLayer.options.time = time; viirisrgbLayer.setUrl(newUrl); } }
         
         // Show notification
         showNotification('Date updated to ' + time);
@@ -425,7 +458,7 @@
         const availableLayers = [
           { name: 'NASA Blue Marble', url: layerTemplates.nasa, time: nasaLayer.options.time },
           { name: 'VIIRS CityLight', url: layerTemplates.viirs, time: viirisLayer.options.time },
-          { name: 'VIIRS RGB Layer', url: layerTemplates.viirsrgb, time: viirisrgbLayer.options.time },
+          { name: 'VIIRS RGB Layer', url: layerTemplates.viirisrgb, time: viirisrgbLayer.options.time },
           { name: 'White Marble', url: layerTemplates.blue, time: blueLayer.options.time }
         ];
 
