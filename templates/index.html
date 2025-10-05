@@ -3,58 +3,94 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NASA Earth Zoom Viewer</title>
+  <title>EarthVision - Interactive Earth Explorer</title>
   <!-- Leaflet CSS -->
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
-  
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body>
-  <div id="borderTop"><button id="hamburgerBtn" class="hamburger" aria-label="Toggle side pane"><span class="bar"></span></button><h1 style="margin:0; font-size:35px; color:#2a7ae2;">EarthVision</h1></div>
+  <div id="borderTop">
+    <div class="logo-container">
+      <button id="hamburgerBtn" class="hamburger" aria-label="Toggle side pane">
+        <span class="bar"></span>
+      </button>
+      <h1 class="logo-text">EarthVision</h1>
+    </div>
+  </div>
+  
   <div id="appContainer">
-  <header class="site-header"></header>
+    <header class="site-header"></header>
 
-  <aside id="sidePane" aria-hidden="true">
-    <div class="pane-header"><strong>Controls</strong><button id="closePane" title="Close" style="background:transparent;border:none;color:#fff;font-size:18px;">✕</button></div>
-    <div class="pane-controls">
-      <!-- will move control-bar here when opened -->
-      <div style="display:flex;flex-direction:column;gap:8px;">
-        <label style="font-size:13px;color:#ddd;">Date</label>
-        <input type="date" id="paneDateInput" />
-        <button id="applyDateBtn">Apply Date</button>
+    <aside id="sidePane" class="side-pane" aria-hidden="true">
+      <div class="pane-header">
+        <h2>Controls</h2>
+        <button id="closePane" class="close-btn" aria-label="Close side panel"><i class="fas fa-times"></i></button>
       </div>
-      <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
-        <label style="font-size:13px;color:#ddd;">Location</label>
-        <input id="paneLocationInput" placeholder="Enter place name or coordinates" />
-        <button id="applyLocationBtn">Go</button>
+      <div class="pane-controls">
+        <div class="control-section">
+          <h3>Date Selection</h3>
+          <div class="input-container">
+            <label for="paneDateInput">Date:</label>
+            <input type="date" id="paneDateInput" class="control-input" />
+            <button id="applyDateBtn" class="control-btn">Apply</button>
+          </div>
+        </div>
+        
+        <div class="control-section">
+          <h3>Location Search</h3>
+          <div class="input-container">
+            <label for="paneLocationInput">Location:</label>
+            <input type="text" id="paneLocationInput" class="control-input" placeholder="City, Country or Lat, Lon" />
+            <button id="applyLocationBtn" class="control-btn">Search</button>
+          </div>
+        </div>
+        
+        <div class="control-bar vertical" role="toolbar" aria-label="Map controls">
+          <button id="zoomIn" class="control-btn" title="Zoom In"><i class="fas fa-plus"></i></button>
+          <button id="zoomOut" class="control-btn" title="Zoom Out"><i class="fas fa-minus"></i></button>
+          <button id="panToggle" class="control-btn active" title="Toggle Pan"><i class="fas fa-hand-paper"></i></button>
+          <button id="resetView" class="control-btn" title="Reset View"><i class="fas fa-home"></i></button>
+          <button id="fitWorld" class="control-btn" title="Fit World"><i class="fas fa-globe-americas"></i></button>
+          <button id="navToggle" class="control-btn" title="Toggle Navigation"><i class="fas fa-location-arrow"></i></button>
+          <button id="compareToggle" class="control-btn" title="Compare Mode"><i class="fas fa-th"></i></button>
+        </div>
+      </div>
+    </aside>
+
+    <div id="map"></div>
+
+    <!-- Compare grid (hidden until Compare is clicked) -->
+    <div id="compareGrid" class="compare-grid" style="display:none;">
+      <div class="compare-header">
+        <h2>Compare View</h2>
+        <button id="closeCompare" class="close-compare-btn"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="compare-cells">
+        <div class="compare-cell" id="cell-0">
+          <div class="cell-label">NASA Blue Marble</div>
+        </div>
+        <div class="compare-cell" id="cell-1">
+          <div class="cell-label">VIIRS CityLight</div>
+        </div>
+        <div class="compare-cell" id="cell-2">
+          <div class="cell-label">VIIRS RGB Layer</div>
+        </div>
+        <div class="compare-cell" id="cell-3">
+          <div class="cell-label">Blue Marble</div>
+        </div>
       </div>
     </div>
-  </aside>
-  <div class="control-bar" role="toolbar" aria-label="Map controls">
-    <button id="zoomIn" title="Zoom in">＋</button>
-    <button id="zoomOut" title="Zoom out">−</button>
-    <button id="panToggle" title="Toggle pan/drag">Pan</button>
-    <button id="resetView" title="Reset view">Reset</button>
-    <button id="fitWorld" title="Fit world">Fit</button>
-    <button id="navToggle" title="Navigation (hover for place names)">Nav</button>
-    <button id="compareToggle" title="Toggle MODIS overlay">Compare</button>
-  </div>
-
-  <div id="map" style="position:absolute; top:56px; left:0; right:0; bottom:0;"></div>
-
-  <!-- Compare grid (hidden until Compare is clicked) -->
-  <div id="compareGrid" style="display:none; position:absolute; top:56px; left:0; right:0; bottom:0; background:transparent; z-index:1800;">
-    <!-- container for nav labels in compare mode will be appended to each map container -->
-    <div class="compare-grid" style="display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; height:100%;">
-      <div class="compare-cell" id="cell-0" style="position:relative; border:1px solid rgba(255,255,255,0.06);"></div>
-      <div class="compare-cell" id="cell-1" style="position:relative; border:1px solid rgba(255,255,255,0.06);"></div>
-      <div class="compare-cell" id="cell-2" style="position:relative; border:1px solid rgba(255,255,255,0.06);"></div>
-      <div class="compare-cell" id="cell-3" style="position:relative; border:1px solid rgba(255,255,255,0.06);"></div>
+    
+    <!-- Loading indicator -->
+    <div id="loadingOverlay" class="loading-overlay">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">Loading Earth data...</div>
     </div>
   </div>
+  
+  <!-- Notification container will be created dynamically -->
 
   <!-- Leaflet JS (load first) -->
   <script

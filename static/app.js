@@ -52,6 +52,26 @@
       }
     );
 
+    const newLayer = L.tileLayer(
+      "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/MODIS_Terra_Land_Surface_Temp_Day/default/2025-10-04/GoogleMapsCompatible_Level7/{z}/{y}/{x}.png",
+      {
+        attribution: "MODIS Terra Land Surface",
+        tileSize: 256,
+        time: "2024-01-01",
+        maxZoom: 9,
+      }
+    );
+
+    const new2Layer = L.tileLayer(
+      "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/SMAP_SurfaceSoilTemperature/default/2025-10-04/GoogleMapsCompatible_Level8/{z}/{y}/{x}.png",
+      {
+        attribution: "MODIS Terra Land Surface",
+        tileSize: 256,
+        time: "2024-01-01",
+        maxZoom: 9,
+      }
+    );
+
     // Add base layer
     nasaLayer.addTo(map);
 
@@ -60,7 +80,9 @@
       "NASA Blue Marble": nasaLayer,
       "Viiris CityLight": viirisLayer,
       "Blue Marble": blueLayer,
-      "Viiris RGB Layer": viirisrgbLayer
+      "Viiris RGB Layer": viirisrgbLayer,
+      "MODIS Tera Land Surface Temp Day": newLayer,
+      "SMAP Soil Moisture": new2Layer
     };
     L.control.layers(baseMaps).addTo(map);
 
@@ -129,9 +151,54 @@
   const controlBar = document.querySelector('.control-bar');
   // default: move control bar into side pane vertically
   if(controlBar){ controlBar.classList.add('vertical'); sidePane.querySelector('.pane-controls').insertBefore(controlBar, sidePane.querySelector('.pane-controls').firstChild); }
-  function openPane(){ sidePane.classList.add('open'); sidePane.setAttribute('aria-hidden','false'); document.getElementById('appContainer').style.left = '320px'; }
-  function closePaneFn(){ sidePane.classList.remove('open'); sidePane.setAttribute('aria-hidden','true'); document.getElementById('appContainer').style.left = '0'; }
-  hamburgerBtn.addEventListener('click', ()=>{ if(sidePane.classList.contains('open')) closePaneFn(); else openPane(); });
+  
+  // Show loading indicator function
+  function showLoading() {
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    if (loadingOverlay) {
+      loadingOverlay.style.display = 'flex';
+      setTimeout(() => {
+        loadingOverlay.classList.add('visible');
+      }, 10);
+    }
+  }
+  
+  // Hide loading indicator function
+  function hideLoading() {
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    if (loadingOverlay) {
+      loadingOverlay.classList.remove('visible');
+      setTimeout(() => {
+        loadingOverlay.style.display = 'none';
+      }, 300);
+    }
+  }
+  
+  function openPane(){ 
+    sidePane.classList.add('open'); 
+    sidePane.setAttribute('aria-hidden','false'); 
+    document.getElementById('appContainer').style.left = '320px';
+    // Add animation class
+    sidePane.classList.add('animate-in');
+    setTimeout(() => {
+      sidePane.classList.remove('animate-in');
+    }, 300);
+  }
+  
+  function closePaneFn(){ 
+    sidePane.classList.add('animate-out');
+    setTimeout(() => {
+      sidePane.classList.remove('open', 'animate-out'); 
+      sidePane.setAttribute('aria-hidden','true'); 
+      document.getElementById('appContainer').style.left = '0';
+    }, 300);
+  }
+  
+  hamburgerBtn.addEventListener('click', ()=>{ 
+    if(sidePane.classList.contains('open')) closePaneFn(); 
+    else openPane(); 
+  });
+  
   closePane.addEventListener('click', closePaneFn);
 
     // date and location controls in side pane
@@ -139,6 +206,17 @@
     const applyDateBtn = document.getElementById('applyDateBtn');
     const paneLocationInput = document.getElementById('paneLocationInput');
     const applyLocationBtn = document.getElementById('applyLocationBtn');
+    
+    // Add event listeners for input focus effects
+    document.querySelectorAll('.control-input').forEach(input => {
+      input.addEventListener('focus', function() {
+        this.parentElement.classList.add('focused');
+      });
+      
+      input.addEventListener('blur', function() {
+        this.parentElement.classList.remove('focused');
+      });
+    });
 
     // initialize date input to current layer time if available
     (function(){ const t = nasaLayer.options.time || viirisLayer.options.time || blueLayer.options.time; if(t) paneDateInput.value = t; })();
@@ -151,14 +229,21 @@
       viirsrgb: viirisrgbLayer._url || 'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_SNPP_CorrectedReflectance_BandsM11-I2-I1/default/{time}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg'
     };
 
-    function applyDateToLayerDateString(dateStr){ // dateStr in YYYY-MM-DD
+    async function applyDateToLayerDateString(dateStr){ // dateStr in YYYY-MM-DD
+      showLoading();
       const time = dateStr || (new Date()).toISOString().slice(0,10);
       try{
         if(nasaLayer){ const tpl = layerTemplates.nasa; if(tpl.indexOf('{time}')!==-1){ const newUrl = tpl.replace('{time}', time); nasaLayer.options.time = time; nasaLayer.setUrl(newUrl); } }
         if(viirisLayer){ const tpl = layerTemplates.viirs; if(tpl.indexOf('{time}')!==-1){ const newUrl = tpl.replace('{time}', time); viirisLayer.options.time = time; viirisLayer.setUrl(newUrl); } }
         if(blueLayer){ const tpl = layerTemplates.blue; if(tpl.indexOf('{time}')!==-1){ const newUrl = tpl.replace('{time}', time); blueLayer.options.time = time; blueLayer.setUrl(newUrl); } }
         if(viirisrgbLayer){ const tpl = layerTemplates.viirsrgb; if(tpl.indexOf('{time}')!==-1){ const newUrl = tpl.replace('{time}', time); viirisrgbLayer.options.time = time; viirisrgbLayer.setUrl(newUrl); } }
-      }catch(e){ console.warn('applyDate error', e); }
+        
+        // Show notification
+        showNotification('Date updated to ' + time);
+      }catch(e){ 
+        console.warn('applyDate error', e);
+        showNotification('Error updating date', 'error');
+      }
       // apply to compare maps if present
       if(window.compareMaps && Array.isArray(window.compareMaps)){
         window.compareMaps.forEach(cm=>{
@@ -167,12 +252,45 @@
           });
         });
       }
+      
+      setTimeout(() => {
+        hideLoading();
+      }, 500);
+    }
+    
+    // Notification system
+    function showNotification(message, type = 'success') {
+      const notificationContainer = document.getElementById('notificationContainer');
+      if (!notificationContainer) {
+        const container = document.createElement('div');
+        container.id = 'notificationContainer';
+        document.body.appendChild(container);
+      }
+      
+      const notification = document.createElement('div');
+      notification.className = `notification ${type}`;
+      notification.textContent = message;
+      
+      document.getElementById('notificationContainer').appendChild(notification);
+      
+      setTimeout(() => {
+        notification.classList.add('show');
+      }, 10);
+      
+      setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+          notification.remove();
+        }, 300);
+      }, 3000);
     }
 
     applyDateBtn.addEventListener('click', ()=>{ applyDateToLayerDateString(paneDateInput.value); });
 
     async function geocodeAndZoom(q){
       if(!q) return;
+      showLoading();
+      
       // if it's lat,lon
       const m = q.match(/^\s*([+-]?[0-9]+\.?[0-9]*)\s*,\s*([+-]?[0-9]+\.?[0-9]*)\s*$/);
       let lat, lon;
@@ -181,8 +299,27 @@
         try{
           const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(q)}&limit=1`;
           const r = await fetch(url, { headers: { 'User-Agent': 'EarthVision/1.0' } });
-          if(!r.ok) return; const j = await r.json(); if(j && j.length){ lat = parseFloat(j[0].lat); lon = parseFloat(j[0].lon); }
-        }catch(e){ console.warn('geocode error', e); }
+          if(!r.ok) {
+            hideLoading();
+            showNotification('Location search failed', 'error');
+            return;
+          }
+          const j = await r.json(); 
+          if(j && j.length){ 
+            lat = parseFloat(j[0].lat); 
+            lon = parseFloat(j[0].lon);
+            showNotification(`Location found: ${j[0].display_name}`);
+          } else {
+            hideLoading();
+            showNotification('No location found', 'error');
+            return;
+          }
+        }catch(e){ 
+          console.warn('geocode error', e);
+          hideLoading();
+          showNotification('Error searching location', 'error');
+          return;
+        }
       }
       if(typeof lat === 'number' && typeof lon === 'number'){
         // compute a single target zoom level: prefer the main map zoom, but consider the first compare map if present
@@ -192,9 +329,46 @@
           try{ const z0 = Math.round(window.compareMaps[0].getZoom()); if(typeof z0 === 'number') targetZoom = Math.max(targetZoom, z0); }catch(e){}
         }
         // apply same center+zoom to main and all compare maps
-        try{ map.setView([lat, lon], targetZoom); }catch(e){}
+        try{ 
+          map.setView([lat, lon], targetZoom);
+          // Add a pulsing marker at the location
+          addPulsingMarker([lat, lon]);
+        }catch(e){}
         if(window.compareMaps && Array.isArray(window.compareMaps)) window.compareMaps.forEach(cm=>{ try{ cm.setView([lat, lon], targetZoom); }catch(e){} });
       }
+      
+      setTimeout(() => {
+        hideLoading();
+      }, 500);
+    }
+    
+    // Add a pulsing marker at a location
+    function addPulsingMarker(latlng) {
+      // Remove any existing pulsing markers
+      map.eachLayer(layer => {
+        if (layer._pulsingMarker) {
+          map.removeLayer(layer);
+        }
+      });
+      
+      // Create a custom pulsing icon
+      const pulsingIcon = L.divIcon({
+        className: 'pulsing-marker',
+        iconSize: [20, 20]
+      });
+      
+      // Add the marker
+      const marker = L.marker(latlng, {
+        icon: pulsingIcon,
+        zIndexOffset: 1000
+      });
+      marker._pulsingMarker = true;
+      marker.addTo(map);
+      
+      // Remove the marker after animation completes
+      setTimeout(() => {
+        map.removeLayer(marker);
+      }, 3000);
     }
 
     applyLocationBtn.addEventListener('click', ()=> geocodeAndZoom(paneLocationInput.value));
@@ -222,48 +396,91 @@
     // Compare grid logic: when Compare button is clicked, show 4 maps in a grid
     (function(){
       const compareBtn = document.getElementById('compareToggle');
-  const compareGrid = document.getElementById('compareGrid');
+      const compareGrid = document.getElementById('compareGrid');
+      const closeCompare = document.getElementById('closeCompare');
       let compareMaps = null; // array of 4 Leaflet maps
 
       function createCompare() {
         // hide main single map
         document.getElementById('map').style.display = 'none';
-        // do not move the control bar into compare grid (keep controls in side pane)
-        const ctrl = document.querySelector('.control-bar');
-        ctrl.setAttribute('data-parent', 'main');
-        compareGrid.style.display = 'block';
+        // show compare grid
+        compareGrid.style.display = 'flex';
 
         // prepare options for new maps
         const center = map.getCenter();
         const zoom = map.getZoom();
 
-  compareMaps = [];
-        for(let i=0;i<4;i++){
+        // Define available layers
+        const availableLayers = [
+          { name: 'NASA Blue Marble', url: layerTemplates.nasa, time: nasaLayer.options.time },
+          { name: 'VIIRS CityLight', url: layerTemplates.viirs, time: viirisLayer.options.time },
+          { name: 'VIIRS RGB Layer', url: layerTemplates.viirsrgb, time: viirisrgbLayer.options.time },
+          { name: 'Blue Marble', url: layerTemplates.blue, time: blueLayer.options.time }
+        ];
+
+        // Shuffle the layers to get random order
+        const shuffledLayers = [...availableLayers].sort(() => Math.random() - 0.5);
+
+        compareMaps = [];
+        for(let i=0; i<4; i++){
           const cell = document.getElementById('cell-'+i);
+          // Clear any existing content
+          while (cell.firstChild) {
+            if (!cell.firstChild.classList || !cell.firstChild.classList.contains('cell-label')) {
+              cell.removeChild(cell.firstChild);
+            } else {
+              break;
+            }
+          }
+          
+          // Update cell label with layer name
+          const cellLabel = cell.querySelector('.cell-label');
+          if (cellLabel) {
+            cellLabel.textContent = shuffledLayers[i].name;
+          } else {
+            const newLabel = document.createElement('div');
+            newLabel.className = 'cell-label';
+            newLabel.textContent = shuffledLayers[i].name;
+            cell.appendChild(newLabel);
+          }
+          
           // create container element
           const container = document.createElement('div');
-          container.style.position = 'absolute'; container.style.top = '0'; container.style.left = '0'; container.style.right = '0'; container.style.bottom = '0'; container.style.width = '100%'; container.style.height = '100%'; container.style.overflow = 'hidden'; container.style.zIndex = '1'; container.style.pointerEvents = 'auto';
+          container.className = 'compare-map-container';
+          container.style.position = 'absolute'; 
+          container.style.top = '0'; 
+          container.style.left = '0'; 
+          container.style.right = '0'; 
+          container.style.bottom = '0'; 
+          container.style.width = '100%'; 
+          container.style.height = '100%';
+          container.style.overflow = 'hidden';
+          container.style.zIndex = '1';
+          container.style.pointerEvents = 'auto';
           cell.appendChild(container);
-          const m = L.map(container, { center: [center.lat, center.lng], zoom: zoom, zoomControl:false });
-          // create layer copies for control using available layer URLs
-          const safeUrl = (layer)=> (layer && (layer._url || layer._leaflet_id)) ? (layer._url || '') : '';
-          const layersCopy = {};
-          try{
-            // default different layer per pane (0..3)
-            if(i===0){ if(nasaLayer) layersCopy['NASA Blue Marble'] = L.tileLayer(nasaLayer._url || nasaLayer._url, {time: nasaLayer.options.time}).addTo(m); }
-            if(i===1){ if(viirisLayer) layersCopy['VIIRS CityLight'] = L.tileLayer(viirisLayer._url || viirisLayer._url, {time: viirisLayer.options.time}).addTo(m); }
-            if(i===2){ if(viirisrgbLayer) layersCopy['VIIRS RGB Layer'] = L.tileLayer(viirisrgbLayer._url || viirisrgbLayer._url, {time: viirisrgbLayer.options.time}).addTo(m); }
-            if(i===3){ if(blueLayer) layersCopy['Blue Marble'] = L.tileLayer(blueLayer._url || blueLayer._url, {time: blueLayer.options.time}).addTo(m); }
-            // include other options so users can switch layers per pane
-            if(nasaLayer && !layersCopy['NASA Blue Marble']) layersCopy['NASA Blue Marble'] = L.tileLayer(nasaLayer._url || nasaLayer._url, {time: nasaLayer.options.time});
-            if(viirisLayer && !layersCopy['VIIRS CityLight']) layersCopy['VIIRS CityLight'] = L.tileLayer(viirisLayer._url || viirisLayer._url, {time: viirisLayer.options.time});
-            if(viirisrgbLayer && !layersCopy['VIIRS RGB Layer']) layersCopy['VIIRS RGB Layer'] = L.tileLayer(viirisrgbLayer._url || viirisrgbLayer._url, {time: viirisrgbLayer.options.time});
-            if(blueLayer && !layersCopy['Blue Marble']) layersCopy['Blue Marble'] = L.tileLayer(blueLayer._url || blueLayer._url, {time: blueLayer.options.time});
-          }catch(e){}
-          L.control.layers(layersCopy, null, { position: 'topright', collapsed: false }).addTo(m);
+          
+          const m = L.map(container, { 
+            center: [center.lat, center.lng], 
+            zoom: zoom, 
+            zoomControl: false,
+            attributionControl: false
+          });
+          
+          // Add the randomly selected layer to this map
+          try {
+            L.tileLayer(shuffledLayers[i].url, {time: shuffledLayers[i].time}).addTo(m);
+          } catch(e){
+            console.error('Error creating layer for compare view:', e);
+          }
 
           // ensure interactions are enabled for compare maps
-          try{ m.dragging.enable(); m.scrollWheelZoom.enable(); m.touchZoom.enable(); m.doubleClickZoom.enable(); m.keyboard.enable(); }catch(e){}
+          try{ 
+            m.dragging.enable(); 
+            m.scrollWheelZoom.enable(); 
+            m.touchZoom.enable(); 
+            m.doubleClickZoom.enable(); 
+            m.keyboard.enable(); 
+          } catch(e){}
 
           compareMaps.push(m);
         }
@@ -302,19 +519,10 @@
         });
         compareMaps = null;
         compareGrid.style.display = 'none';
-        // move control bar back to body at top-left
-        const ctrl = document.querySelector('.control-bar');
-        if(ctrl){
-          if(document.getElementById('sidePane').classList.contains('open')){
-            document.getElementById('sidePane').appendChild(ctrl);
-          } else {
-            document.body.insertBefore(ctrl, document.getElementById('map'));
-          }
-        }
         document.getElementById('map').style.display = 'block';
 
-  // re-invalidate sizes
-  try{ map.invalidateSize(); }catch(e){}
+        // re-invalidate sizes
+        try{ map.invalidateSize(); }catch(e){}
 
         // clear exposed compare maps
         window.compareMaps = null;
@@ -331,7 +539,10 @@
         }
       });
 
-      // removed closeCompare button - user closes compare using the Compare button again
+      closeCompare.addEventListener('click', () => {
+        destroyCompare();
+        compareBtn.classList.remove('active');
+      });
     })();
 
     // Navigation (hover reverse-geocode) module

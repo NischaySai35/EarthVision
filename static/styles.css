@@ -1,74 +1,710 @@
+/* Modern CSS Reset and Variables */
+:root {
+  --primary-color: #3498db;
+  --primary-dark: #2980b9;
+  --accent-color: #2ecc71;
+  --dark-bg: #121212;
+  --dark-surface: #1e1e1e;
+  --light-text: #ffffff;
+  --muted-text: #b0b0b0;
+  --header-height: 60px;
+  --sidebar-width: 320px;
+  --border-radius: 8px;
+  --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  --transition-speed: 0.3s;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+
 body, html {
-      margin: 0;
-      height: 100%;
-      overflow: hidden;
-      font-family: sans-serif;
-      background-color: #000;
-      box-sizing: border-box;
-    }
-    #map {
-      height: 100%;
-      width: 100%;
-    }
-    /* Page frame: top and left white borders (content is inset) */
-  #borderTop{ position:fixed; top:0; left:0; right:0; height:17mm; background:#fff; z-index:2600; display:flex; align-items:center; justify-content:center; }
-  #appContainer{ position:fixed; top:5mm; left:0; right:0; bottom:0; z-index:2000; overflow:hidden; }
-  #appContainer{ transition: left .28s ease; }
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Montserrat', sans-serif;
+  background-color: var(--dark-bg);
+  box-sizing: border-box;
+  color: var(--light-text);
+}
 
-    /* Header inside app container */
-  header.site-header{ position:relative; height:56px; display:flex; align-items:center; justify-content:center; z-index:2200; background: transparent; color:#fff; }
-  header.site-header h1{ font-size:28px; margin:0; color: #000000; }
-  .hamburger{ width:28px; height:28px; background:transparent; border:none; cursor:pointer; position:absolute; left:12px; top:14px; }
-  .hamburger .bar{ width:18px; height:2px; background:#000000; display:block; box-shadow:0 6px 0 #000000, 0 -6px 0 #000000; }
+*, *:before, *:after {
+  box-sizing: inherit;
+}
 
-    /* Side pane */
-  #sidePane{ position:fixed; left:0; top:56px; bottom:0; width:320px; background:rgba(18,18,18,0.96); color:#fff; z-index:2700; transform:translateX(-100%); transition:transform .28s ease; padding:12px; overflow:auto; }
-    #sidePane.open{ transform:translateX(0); }
-    #sidePane .pane-header{ display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px; }
-    #sidePane .pane-controls{ display:flex; flex-direction:column; gap:8px; }
-    #sidePane input, #sidePane button{ font-size:14px; }
-    /* Control bar */
-    .control-bar {
-      position: relative;
-      z-index: 1000;
-      display: flex;
-      gap: 8px;
-      background: rgba(20,20,20,0.6);
-      padding: 8px;
-      border-radius: 8px;
-      align-items: center;
-      backdrop-filter: blur(4px);
-      flex-wrap:wrap;
-    }
-    .control-bar.vertical{ flex-direction: column; align-items: stretch; gap:6px; background: transparent; padding:0; }
-    .control-bar.vertical button, .control-bar.vertical input[type="range"]{ width:100%; }
-    .control-bar button, .control-bar input[type="range"] {
-      background: #1f1f1f;
-      color: #fff;
-      border: 1px solid rgba(255,255,255,0.08);
-      padding: 6px 8px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 13px;
-    }
-    .control-bar button.active { background: #2a7ae2; }
-    .control-bar label { color: #ddd; font-size: 12px; margin-left:6px; }
-    .leaflet-control-attribution {
-      display: none; /* Hide extra text */
-    }
-    /* Navigation hover label */
-    .nav-label{
-      position: absolute;
-      pointer-events: none;
-      background: rgba(0,0,0,0.75);
-      color: #fff;
-      padding: 6px 8px;
-      border-radius: 6px;
-      font-size: 12px;
-      transform: translate(12px, -120%); /* anchor to the right of pointer */
-      white-space: nowrap;
-      z-index: 3000;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
-    }
-    /* Make sure leaflet control UI (layer buttons) appear above compare grid */
-    .leaflet-top, .leaflet-control{ z-index: 4000 !important; }
+#map {
+  height: 100%;
+  width: 100%;
+  transition: filter var(--transition-speed) ease;
+}
+
+/* Modern Header Design */
+#borderTop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--header-height);
+  background: linear-gradient(90deg, #1a2a6c, #b21f1f, #fdbb2d);
+  z-index: 2600;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  box-shadow: var(--box-shadow);
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.logo-text {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--light-text);
+  letter-spacing: 1px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Header Controls */
+.header-controls {
+  display: flex;
+  align-items: center;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: var(--border-radius);
+  padding: 5px;
+  transition: all 0.3s ease;
+}
+
+.search-container:focus-within {
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+}
+
+.search-container input {
+  background: transparent;
+  border: none;
+  color: var(--light-text);
+  padding: 5px 10px;
+  font-size: 14px;
+  width: 200px;
+}
+
+.search-container input:focus {
+  outline: none;
+}
+
+.search-container button {
+  background: transparent;
+  border: none;
+  color: var(--light-text);
+  cursor: pointer;
+  padding: 5px 10px;
+  transition: all 0.2s ease;
+}
+
+.search-container button:hover {
+  color: var(--primary-color);
+}
+
+#appContainer {
+  position: fixed;
+  top: var(--header-height);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2000;
+  overflow: hidden;
+  transition: all var(--transition-speed) ease;
+}
+
+/* Hamburger Menu Animation */
+.hamburger {
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+  z-index: 3000;
+}
+
+.hamburger:hover {
+  transform: scale(1.1);
+}
+
+.hamburger .bar {
+  width: 24px;
+  height: 2px;
+  background: var(--light-text);
+  display: block;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.hamburger .bar::before,
+.hamburger .bar::after {
+  content: '';
+  position: absolute;
+  width: 24px;
+  height: 2px;
+  background: var(--light-text);
+  transition: all 0.3s ease;
+}
+
+.hamburger .bar::before {
+  transform: translateY(-8px);
+}
+
+.hamburger .bar::after {
+  transform: translateY(8px);
+}
+
+.hamburger.active .bar {
+  background: transparent;
+}
+
+.hamburger.active .bar::before {
+  transform: rotate(45deg);
+}
+
+.hamburger.active .bar::after {
+  transform: rotate(-45deg);
+}
+
+/* Modern Side Pane */
+#sidePane {
+  position: fixed;
+  left: 0;
+  top: var(--header-height);
+  bottom: 0;
+  width: var(--sidebar-width);
+  background: rgba(18, 18, 18, 0.95);
+  color: var(--light-text);
+  z-index: 2700;
+  transform: translateX(-100%);
+  transition: transform var(--transition-speed) cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 20px;
+  overflow: auto;
+  backdrop-filter: blur(10px);
+  box-shadow: var(--box-shadow);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#sidePane.open {
+  transform: translateX(0);
+}
+
+#sidePane .pane-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#sidePane .pane-header strong {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+#closePane {
+  background: transparent;
+  border: none;
+  color: var(--light-text);
+  font-size: 20px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+#closePane:hover {
+  transform: scale(1.2);
+  color: var(--primary-color);
+}
+
+#sidePane .pane-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Control Sections */
+.control-section {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.control-section:last-child {
+  border-bottom: none;
+}
+
+.layer-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.layer-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--light-text);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--border-radius);
+  padding: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.layer-btn i {
+  font-size: 16px;
+}
+
+.layer-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.layer-btn.active {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+#sidePane label {
+  font-size: 14px;
+  color: var(--muted-text);
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+#sidePane input {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--border-radius);
+  color: var(--light-text);
+  padding: 10px 12px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+#sidePane input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.3);
+}
+
+#sidePane button {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 10px 15px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+#sidePane button:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+/* Control Bar */
+.control-bar {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  gap: 10px;
+  background: rgba(30, 30, 30, 0.85);
+  padding: 12px;
+  border-radius: var(--border-radius);
+  align-items: center;
+  backdrop-filter: blur(8px);
+  flex-wrap: wrap;
+  box-shadow: var(--box-shadow);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.control-bar.vertical {
+  width: 100%;
+  margin-top: 20px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  background: rgba(30, 30, 30, 0.85);
+  padding: 12px;
+}
+
+.control-bar.vertical button,
+.control-bar.vertical input[type="range"] {
+  width: 100%;
+}
+
+.control-bar button,
+.control-bar input[type="range"] {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--light-text);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 8px 12px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.control-bar button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.control-bar button.active {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.control-bar label {
+  color: var(--muted-text);
+  font-size: 13px;
+  margin-left: 6px;
+}
+
+/* Navigation hover label */
+.nav-label {
+  position: absolute;
+  pointer-events: none;
+  background: rgba(0, 0, 0, 0.85);
+  color: var(--light-text);
+  padding: 8px 12px;
+  border-radius: var(--border-radius);
+  font-size: 13px;
+  transform: translate(12px, -120%);
+  white-space: nowrap;
+  z-index: 3000;
+  box-shadow: var(--box-shadow);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(4px);
+}
+
+/* Compare Grid */
+#compareGrid {
+  position: absolute;
+  top: var(--header-height);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 1800;
+  display: flex;
+  flex-direction: column;
+}
+
+.compare-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background: rgba(30, 30, 30, 0.9);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.compare-header h3 {
+  margin: 0;
+  color: var(--light-text);
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.compare-header button {
+  background: transparent;
+  border: none;
+  color: var(--light-text);
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.compare-header button:hover {
+  color: var(--primary-color);
+  transform: scale(1.1);
+}
+
+.compare-cells {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  height: 100%;
+  gap: 4px;
+  padding: 4px;
+  flex: 1;
+}
+
+.compare-cell {
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+.compare-cell:hover {
+  box-shadow: inset 0 0 0 2px var(--primary-color);
+}
+
+.cell-label {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  color: var(--light-text);
+  padding: 5px 10px;
+  border-radius: var(--border-radius);
+  font-size: 12px;
+  font-weight: 500;
+  z-index: 10;
+}
+
+/* Loading Overlay */
+#loadingOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 5000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+#loadingOverlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: var(--primary-color);
+  animation: spin 1s ease-in-out infinite;
+}
+
+.loading-text {
+  margin-top: 20px;
+  color: var(--light-text);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Notification system */
+#notificationContainer {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.notification {
+  background-color: var(--dark-surface);
+  color: var(--light-text);
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateX(120%);
+  opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  max-width: 300px;
+  border-left: 4px solid var(--accent-color);
+}
+
+.notification.show {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.notification.success {
+  border-left-color: #4CAF50;
+}
+
+.notification.error {
+  border-left-color: #F44336;
+}
+
+.notification.warning {
+  border-left-color: #FF9800;
+}
+
+/* Pulsing marker */
+.pulsing-marker {
+  background-color: var(--accent-color);
+  border-radius: 50%;
+  height: 20px;
+  width: 20px;
+  position: relative;
+}
+
+.pulsing-marker:before {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  height: 300%;
+  width: 300%;
+  top: -100%;
+  left: -100%;
+  background-color: var(--accent-color);
+  opacity: 0.6;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.5);
+    opacity: 0.8;
+  }
+  70% {
+    transform: scale(2);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+
+/* Input focus effects */
+.input-container {
+  position: relative;
+  margin-bottom: 15px;
+}
+
+.input-container.focused .control-input {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(46, 204, 113, 0.2);
+}
+
+.control-input {
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Side pane animations */
+#sidePane.animate-in {
+  animation: slideIn 0.3s ease forwards;
+}
+
+#sidePane.animate-out {
+  animation: slideOut 0.3s ease forwards;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-20px);
+    opacity: 0.8;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-20px);
+    opacity: 0.8;
+  }
+}
+
+/* Make sure leaflet control UI (layer buttons) appear above compare grid */
+.leaflet-top,
+.leaflet-control {
+  z-index: 4000 !important;
+}
+
+.leaflet-control-attribution {
+  display: none; /* Hide extra text */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .control-bar {
+    bottom: 10px;
+    right: 10px;
+    padding: 8px;
+  }
+  
+  .control-bar button {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+  
+  .search-container input {
+    width: 150px;
+  }
+  
+  #sidePane {
+    width: 280px;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo-text {
+    font-size: 22px;
+  }
+  
+  .search-container input {
+    width: 120px;
+  }
+  
+  .control-bar {
+    padding: 6px;
+    gap: 6px;
+  }
+  
+  .control-bar button {
+    padding: 5px 8px;
+    font-size: 11px;
+  }
+  
+  #sidePane {
+    width: 250px;
+  }
+}
