@@ -63,9 +63,19 @@
     );
 
     const new2Layer = L.tileLayer(
-      "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/SMAP_SurfaceSoilTemperature/default/2025-10-04/GoogleMapsCompatible_Level8/{z}/{y}/{x}.png",
+      "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
       {
-        attribution: "MODIS Terra Land Surface",
+        attribution: "Esri World Imagery",
+        tileSize: 256,
+        time: "2024-01-01",
+        maxZoom: 9,
+      }
+    );
+
+    const new3Layer = L.tileLayer(
+      "https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg",
+      {
+        attribution: "Water color map",
         tileSize: 256,
         time: "2024-01-01",
         maxZoom: 9,
@@ -82,7 +92,8 @@
       "Blue Marble": blueLayer,
       "Viiris RGB Layer": viirisrgbLayer,
       "MODIS Tera Land Surface Temp Day": newLayer,
-      "SMAP Soil Moisture": new2Layer
+      "Esri World Map": new2Layer,
+      "Watercolor Map": new3Layer
     };
     L.control.layers(baseMaps).addTo(map);
 
