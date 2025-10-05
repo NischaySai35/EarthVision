@@ -1,4 +1,4 @@
-// Initialize map (centered on Earth)
+// Initialized map (centered on Earth)
     // Disable the default Leaflet zoom controls because we provide custom buttons
     const map = L.map('map', {
       center: [20, 0], // latitude, longitude
@@ -12,7 +12,7 @@
 
     // --- Base Layer ---
     const nasaLayer = L.tileLayer(
-      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default/{time}/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpg",
       {
         attribution: "World",
         tileSize: 256,
@@ -32,7 +32,7 @@
     );
 
     const blueLayer = L.tileLayer(
-      "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default/{time}/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpg",
+      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       {
         attribution: "MODIS Terra True Color © NASA GIBS",
         tileSize: 256,
@@ -88,7 +88,7 @@
     const baseMaps = {
       "NASA Blue Marble": nasaLayer,
       "Viiris CityLight": viirisLayer,
-      "Blue Marble": blueLayer,
+      "White Marble": blueLayer,
       "Viiris RGB Layer": viirisrgbLayer,
       "MODIS Tera Land Surface Temp Day": newLayer,
       "Esri World Map": new2Layer,
@@ -102,7 +102,8 @@
     // Optional: click event (no label feature)
     map.on('click', function (e) {
       // default click shows coords
-      alert(`Latitude: ${e.latlng.lat.toFixed(4)}, Longitude: ${e.latlng.lng.toFixed(4)}`);
+      
+      
     });
 
     // UI wiring for control bar
@@ -425,7 +426,7 @@
           { name: 'NASA Blue Marble', url: layerTemplates.nasa, time: nasaLayer.options.time },
           { name: 'VIIRS CityLight', url: layerTemplates.viirs, time: viirisLayer.options.time },
           { name: 'VIIRS RGB Layer', url: layerTemplates.viirsrgb, time: viirisrgbLayer.options.time },
-          { name: 'Blue Marble', url: layerTemplates.blue, time: blueLayer.options.time }
+          { name: 'White Marble', url: layerTemplates.blue, time: blueLayer.options.time }
         ];
 
         // Shuffle the layers to get random order
